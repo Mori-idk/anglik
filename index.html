@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Słowotwórstwo - Business English</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .question-container {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .root-word {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+        input[type="text"] {
+            border: 2px solid #bdc3c7;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 16px;
+            width: 150px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+        .correct {
+            border-color: #2ecc71 !important;
+            background-color: #eafaf1;
+        }
+        .incorrect {
+            border-color: #e74c3c !important;
+            background-color: #fceae9;
+        }
+        .feedback {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .feedback.correct-text { color: #2ecc71; }
+        .feedback.incorrect-text { color: #e74c3c; }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .citation {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Ćwiczenia Słowotwórcze</h1>
+    <p>Wpisz odpowiednie formy słów bazowych w luki, a następnie sprawdź swoje odpowiedzi.</p>
+
+    <div id="quiz-container">
+        </div>
+
+    <button onclick="checkAnswers()">Sprawdź odpowiedzi</button>
+
+    <script>
+        // Baza pytań oparta na Twoim pliku
+        const questions = [
+    { id: 1, textBefore: "1. Increased environmental ", textAfter: " has led to a greater demand for recycled paper.", root: "AWARE", answer: "awareness" }, // [cite: 1, 2]
+    { id: 2, textBefore: "2. Environmental ", textAfter: " has increased dramatically over the past decade.", root: "AWARE", answer: "awareness" }, // [cite: 3, 4]
+    { id: 3, textBefore: "3. Students who achieve an ", textAfter: " standard will progress to degree studies.", root: "ACCEPT", answer: "acceptable" }, // [cite: 5, 7]
+    { id: 4, textBefore: "4. The recommendations from this report are ", textAfter: ".", root: "ACCEPT", answer: "acceptable" }, // [cite: 8, 9]
+    { id: 5, textBefore: "5. The requested loan would be completely safe for the company, as it would be guaranteed by banker's ", textAfter: ".", root: "ACCEPT", answer: "acceptance" }, // [cite: 10, 11, 12]
+    { id: 6, textBefore: "6. The proposals must be ", textAfter: " to the shareholders.", root: "ACCEPT", answer: "acceptable" }, // [cite: 14, 15, 16]
+    { id: 7, textBefore: "7. The industry's proposals were politically ", textAfter: " to the government.", root: "ACCEPT", answer: "unacceptable" }, // [cite: 18]
+    { id: 8, textBefore: "8. Many viewers find the amount of violence on TV ", textAfter: ".", root: "ACCEPT", answer: "unacceptable" }, // [cite: 19]
+    { id: 9, textBefore: "9. TV presenter Rick Edwards hosted the ceremony, which highlighted the ", textAfter: " of small and medium sized business.", root: "ACHIEVE", answer: "achievements" }, // [cite: 20, 21, 22]
+    { id: 10, textBefore: "10. The topic of my presentation is \"Our ", textAfter: " and a year of change\".", root: "ACHIEVE", answer: "achievements" }, // [cite: 23]
+    { id: 11, textBefore: "11. Mergers and ", textAfter: " (M&A) is the area of corporate finances, management and strategy dealing with purchasing and/or joining with other companies.", root: "ACQUIRE", answer: "acquisitions" }, // [cite: 24, 25, 26]
+    { id: 12, textBefore: "12. Business ", textAfter: " can include things like operations, marketing, production and administration.", root: "ACT", answer: "activities" }, // [cite: 27, 28, 29]
+    { id: 13, textBefore: "13. Business ", textAfter: " - any activity undertaken by individuals or companies, such as buying, selling, marketing, or investing, for the purpose of generating profits.", root: "ACT", answer: "activities" }, // [cite: 31, 32]
+    { id: 14, textBefore: "14. Although he's nearly 80, he is still very ", textAfter: ".", root: "ACT", answer: "active" }, // [cite: 33, 34, 35]
+    { id: 15, textBefore: "15. Bank account or credit account with frequent or regular transactions- ", textAfter: " account.", root: "ACT", answer: "active" }, // [cite: 36, 38]
+    { id: 16, textBefore: "16. There are 68 million ", textAfter: " personal current accounts in the UK.", root: "ACT", answer: "active" }, // [cite: 39, 40, 41, 42]
+    { id: 17, textBefore: "17. He's been ", textAfter: " involved in politics for 30 years.", root: "ACT", answer: "actively" }, // [cite: 43, 44, 45, 46]
+    { id: 18, textBefore: "18. Strategic ", textAfter: " is a planned ability to react effectively when business and environmental factors change unexpectedly.", root: "ADAPT", answer: "adaptability" }, // [cite: 47, 48]
+    { id: 19, textBefore: "19. We need ", textAfter: " workers who are willing to learn new skills.", root: "ADAPT", answer: "adaptable" }, // [cite: 49, 50]
+    { id: 20, textBefore: "20. There is plenty of room for ", textAfter: " within the company.", root: "ADVANCE", answer: "advancement" }, // [cite: 52, 53]
+    { id: 21, textBefore: "21. Many operations were successfully performed during the war thanks to this ", textAfter: " in medicine.", root: "ADVANCE", answer: "advancement" }, // [cite: 54, 55, 56]
+    { id: 22, textBefore: "22. In spite of all its ", textAfter: ", medical science still knows little about the brain.", root: "ADVANCE", answer: "advancements" }, // [cite: 57]
+    { id: 23, textBefore: "23. The BBC is not permitted to carry ", textAfter: " or sponsorship on its public services. This keeps them independent of commercial interests.", root: "ADVERTISE", answer: "advertising" }, // [cite: 58, 59, 60]
+    { id: 24, textBefore: "24. The purpose of ", textAfter: " is to make customers aware of your product or service.", root: "ADVERTISE", answer: "advertising" }, // [cite: 61, 62, 63, 64]
+    { id: 25, textBefore: "25. ", textAfter: ", promotion and sponsorship are one of the most effective ways to reduce tobacco consumption.", root: "ADVERTISE", answer: "advertising" }, // [cite: 65, 66, 67]
+    { id: 26, textBefore: "26. A small group of business leaders from sectors of strategic importance to the UK provides regular, high level ", textAfter: " to the Prime Minister.", root: "ADVISE", answer: "advice" }, // [cite: 68, 69]
+    { id: 27, textBefore: "27. Your small business needs an ", textAfter: " board- trusted advisors to whom they can turn.", root: "ADVISE", answer: "advisory" }, // [cite: 71, 74, 76]
+    { id: 28, textBefore: "28. A job ", textAfter: " form is your chance to show employers that you're perfectly suited to the role and deserve to be shortlisted for an interview.", root: "APPLY", answer: "application" }, // [cite: 77, 78, 79, 80]
+    { id: 29, textBefore: "29. Have you filled in the ", textAfter: " form for your passport yet?", root: "APPLY", answer: "application" }, // [cite: 81, 82, 83, 84]
+    { id: 30, textBefore: "30. A job ", textAfter: " form is your chance to show employers that you're perfectly suited to the role and deserve to be shortlisted for an interview.", root: "APPLY", answer: "application" }, // [cite: 85, 86, 87]
+    { id: 31, textBefore: "31. Successful ", textAfter: " must be able to demonstrate a clear ability to lead.", root: "APPLY", answer: "applicants" }, // [cite: 88, 89, 90]
+    { id: 32, textBefore: "32. Some ", textAfter: " have been invited to take entrance exams to be considered for admission.", root: "APPLY", answer: "applicants" }, // [cite: 92]
+    { id: 33, textBefore: "33. This section of the law is ", textAfter: " only to businesses.", root: "APPLY", answer: "applicable" }, // [cite: 96]
+    { id: 34, textBefore: "34. Did he get his job by ", textAfter: " or election?", root: "APPOINT", answer: "appointment" }, // [cite: 98]
+    { id: 35, textBefore: "35. ", textAfter: " or election of the subsequent directors is usually effected at a general meeting by a resolution.", root: "APPOINT", answer: "appointment" }, // [cite: 100]
+    { id: 36, textBefore: "36. You should always get ", textAfter: " from your manager before you try out any new idea.", root: "APPROVE", answer: "approval" }, // [cite: 104, 105, 107]
+    { id: 37, textBefore: "37. His personality includes attributes such as trust, altruism, kindness, affection and other pro-social behaviours people with this trait tend to have a friendly, ", textAfter: " nature.", root: "APPROACH", answer: "approachable" }, // [cite: 108, 109, 110]
+    { id: 38, textBefore: "38. Several popular ", textAfter: " against business ethics are examined.", root: "ARGUE", answer: "arguments" }, // [cite: 112]
+    { id: 39, textBefore: "39. Being able to make, change and cancel ", textAfter: " is an important skill in business.", root: "APPOINT", answer: "appointments" }, // [cite: 114, 115]
+    { id: 40, textBefore: "40. Both their ", textAfter: " of production costs were hopelessly inaccurate.", root: "ASSESS", answer: "assessments" }, // [cite: 117]
+    { id: 41, textBefore: "41. The company needs more financial ", textAfter: " from the government.", root: "ASSIST", answer: "assistance" }, // [cite: 118, 122]
+    { id: 42, textBefore: "42. High mortgage rates have decreased the ", textAfter: " of home-owning.", root: "ATTRACT", answer: "attractiveness" }, // [cite: 119, 124]
+    { id: 43, textBefore: "43. In advertising, the use of highly ", textAfter: " models is believed to be effective in increasing sales.", root: "ATTRACT", answer: "attractive" }, // [cite: 126, 127]
+    { id: 44, textBefore: "44. ", textAfter: " packaging will make people interested in your products.", root: "ATTRACT", answer: "attractive" }, // [cite: 130, 131]
+    { id: 45, textBefore: "45. Every week we read that something we believe is bad for us actually has ", textAfter: " health effects.", root: "BENEFIT", answer: "beneficial" }, // [cite: 133, 134]
+    { id: 46, textBefore: "46. Daily exercise as ", textAfter: " to health in old age as quitting smoking, study finds.", root: "BENEFIT", answer: "beneficial" }, // [cite: 136, 137]
+    { id: 47, textBefore: "47. Notice of ", textAfter: " must be made in writing and sent by email to vvvvv@gmail.com", root: "CANCEL", answer: "cancellation" }, // [cite: 140, 141]
+    { id: 48, textBefore: "48. The ", textAfter: " of the government was a really bad idea in my opinion because it would lead to the downfall of our entire structure.", root: "CENTRALISE", answer: "centralisation" }, // [cite: 143, 144]
+    { id: 49, textBefore: "49. ", textAfter: " and local governance are increasingly recognised as basic components of democratic governance.", root: "CENTRALISE", answer: "decentralisation" }, // [cite: 147, 148, 149]
+    { id: 50, textBefore: "50. Regular flow of business depend upon the absence of ", textAfter: " and monopoly.", root: "CENTRALISE", answer: "centralisation" }, // [cite: 151]
+    { id: 51, textBefore: "51. I hate making consumer ", textAfter: " at the best of times, because I have uncomfortable suspicion that big companies are trying to gull me out of as much money as possible.", root: "CHOOSE", answer: "choices" }, // [cite: 152, 153]
+    { id: 52, textBefore: "52. These people have the ", textAfter: ".", root: "CHOOSE", answer: "choice" }, // [cite: 155]
+    { id: 53, textBefore: "53. Students have a ", textAfter: " between studying French or German.", root: "CHOOSE", answer: "choice" }, // [cite: 156, 160, 161]
+    { id: 54, textBefore: "54. The ", textAfter: " future of the company looks very promising.", root: "COMMERCE", answer: "commercial" }, // [cite: 158, 163]
+    { id: 55, textBefore: "55. What a pity Christmas has become so ", textAfter: ".", root: "COMMERCIAL", answer: "commercialised" }, // [cite: 164, 166]
+    { id: 56, textBefore: "56. Good ", textAfter: " is vital in a large organization.", root: "COMMUNICATE", answer: "communication" }, // [cite: 165, 167]
+    { id: 57, textBefore: "57. Good ", textAfter: " is about speaking and listening-you need to make sure you are understood clearly and you understand what people are saying to you.", root: "COMMUNICATE", answer: "communication" }, // [cite: 168, 169]
+    { id: 58, textBefore: "58. One of the most powerful forms of non-verbal ", textAfter: " is body language.", root: "COMMUNICATE", answer: "communication" }, // [cite: 170]
+    { id: 59, textBefore: "59. In a poll of graduate employers, more than half said that none or few graduates were \"work ready\", with new recruits lacking basic attributes such as team work, ", textAfter: " punctuality and the ability to cope under pressure.", root: "COMMUNICATE", answer: "communication" }, // [cite: 172, 173, 174, 176]
+    { id: 60, textBefore: "60. The court awarded the victims millions of dollars in ", textAfter: ".", root: "COMPENSATE", answer: "compensation" }, // [cite: 177]
+    { id: 61, textBefore: "61. You should claim/seek ", textAfter: ".", root: "COMPENSATE", answer: "compensation" },
+    { id: 62, textBefore: "62. Prices are lower when there is ", textAfter: " among/between the stores.", root: "COMPETE", answer: "competition" },
+    { id: 63, textBefore: "63. Brutal ", textAfter: " batters supermarkets the world over.", root: "COMPETE", answer: "competition" },
+    { id: 64, textBefore: "64. World Economic Forum says UK has moved higher in its global ", textAfter: " league table - UK ranked as 8th most competitive country in world.", root: "COMPETE", answer: "competitiveness" },
+    { id: 65, textBefore: "65. Some US industries are not as ", textAfter: " as they have been in the past.", root: "COMPETE", answer: "competitive" },
+    { id: 66, textBefore: "66. There are two important ways to keep your products ", textAfter: " priced: calculate your costs and research your competitors regularly.", root: "COMPETE", answer: "competitively" },
+    { id: 67, textBefore: "67. OPG will investigate your ", textAfter: " in confidence and respond within 10 working days.", root: "COMPLAIN", answer: "complaints" },
+    { id: 68, textBefore: "68. We can't deal with ", textAfter: " about legal advice or services, the Solicitors Regulation Authority may be able to help you.", root: "COMPLAIN", answer: "complaints" },
+    { id: 69, textBefore: "69. There has still been no official ", textAfter: " of the report.", root: "CONFIRM", answer: "confirmation" },
+    { id: 70, textBefore: "70. Most hotels require ", textAfter: " from a prospective guest in writing.", root: "CONFIRM", answer: "confirmation" },
+    { id: 71, textBefore: "71. Our first priority is to maintain the customer's ", textAfter: " in our product.", root: "CONFIDENT", answer: "confidence" },
+    { id: 72, textBefore: "72. I've always been fiercely ", textAfter: ", confident and determined to succeed.", root: "DEPEND", answer: "independent" },
+    { id: 73, textBefore: "73. A ", textAfter: " receipt, usually physical or electronic provides confirmation that payment has been received.", root: "CONFIRM", answer: "confirmation" },
+    { id: 74, textBefore: "74. You will receive an e-mail ", textAfter: " of your order.", root: "CONFIRM", answer: "confirmation" },
+    { id: 75, textBefore: "75. Milan special forces have arrested two men in ", textAfter: " with last week's attack on a luxury hotel.", root: "CONNECT", answer: "connection" },
+    { id: 76, textBefore: "76. The dictionary defines a ", textAfter: " as \"an expert in a particular field who works as an advisor either to a company or to another individual.\"", root: "CONSULT", answer: "consultant" },
+    { id: 77, textBefore: "77. We are a business and management ", textAfter: " with key expertise in Logistics and Supply Chain.", root: "CONSULT", answer: "consultancy" },
+    { id: 78, textBefore: "78. We are a team of experienced ", textAfter: " who have been in senior corporate roles before becoming consultants.", root: "CONSULT", answer: "consultants" },
+    { id: 79, textBefore: "79. The law protects your ", textAfter: " rights when you buy goods or services.", root: "CONSUME", answer: "consumer" },
+    { id: 80, textBefore: "80. The UK European Consumer Centre offers free and impartial advice and assistance in cross-border European disputes between ", textAfter: " and traders.", root: "CONSUME", answer: "consumers" },
+    { id: 81, textBefore: "81. Finally, we should examine some adverse effects of alcohol ", textAfter: ": traffic accidents, suicide rates, and vandalism rates.", root: "CONSUME", answer: "consumption" },
+    { id: 82, textBefore: "82. Community police have made a very positive ", textAfter: " to crime prevention.", root: "CONTRIBUTE", answer: "contribution" },
+    { id: 83, textBefore: "83. If a company ", textAfter: " work, they pay other people to do part of their work for them.", root: "CONTRACT", answer: "subcontracts" },
+    { id: 84, textBefore: "84. A person or company that agrees to do work or provide goods for another company is called a ", textAfter: ".", root: "CONTRACT", answer: "contractor" },
+    { id: 85, textBefore: "85. As stated in the ", textAfter: " obligations signed by all persons involved, strong and offensive language will not be tolerated in the workplace, and can result in termination.", root: "CONTRACT", answer: "contractual" },
+    { id: 86, textBefore: "86. An ", textAfter: " Truth \"a 2006 documentary film has been credited for raising international public awareness of global warming.", root: "INCONVENIENCE", answer: "inconvenient" },
+    { id: 87, textBefore: "87. The British ", textAfter: " to the metric system took place in the 1970s.", root: "CONVERT", answer: "conversion" },
+    { id: 88, textBefore: "88. Our University has released a study looking to understand how some people are more ", textAfter: " than others.", root: "DECIDE", answer: "decisive" },
+    { id: 89, textBefore: "89. Being ", textAfter: " means that you have the ability to decide; from the strength of a decision you then have the ability to act.", root: "DECIDE", answer: "decisive" },
+    { id: 90, textBefore: "90. There are 19 famous companies that originally had ", textAfter: " names.", root: "DIFFER", answer: "different" },
+    { id: 91, textBefore: "91. Profits were £1 million, which is a ", textAfter: " of 5 per cent on last year.", root: "DECREASE", answer: "decrease" },
+    { id: 92, textBefore: "92. We offer free UK ", textAfter: " for all orders over £20.", root: "DELIVER", answer: "delivery" },
+    { id: 93, textBefore: "93. There was a delay in the ", textAfter: " of our plane.", root: "DEPART", answer: "departure" },
+    { id: 94, textBefore: "94. UK ", textAfter: " producers earn record £391m from overseas TV sales.", root: "DEPEND", answer: "independent" },
+    { id: 95, textBefore: "95. This is small business that is ", textAfter: " owned and operated by an American citizens.", root: "DEPEND", answer: "independently" },
+    { id: 96, textBefore: "96. The company is run by a board of ", textAfter: ".", root: "DIRECT", answer: "directors" },
+    { id: 97, textBefore: "97. The company is hoping to extend its operations in new ", textAfter: ".", root: "DIRECT", answer: "direction" },
+    { id: 98, textBefore: "98. These are proposals for implementing the EU ", textAfter: " on paternity leave.", root: "DIRECT", answer: "directives" },
+    { id: 99, textBefore: "99. EU ", textAfter: " can be used to establish common social policies, and thus can affect employment issues, labour law, working conditions, and health and safety.", root: "DIRECT", answer: "directives" },
+    { id: 100, textBefore: "100. Employees have little ", textAfter: " contact with management.", root: "DIRECT", answer: "direct" },
+    { id: 101, textBefore: "101. Many problems can be ", textAfter: " linked to the decline in manufacturing.", root: "DIRECT", answer: "directly" },
+    { id: 102, textBefore: "102. There have been significant computer ", textAfter: " during the last decade.", root: "DEVELOP", answer: "developments" },
+    { id: 103, textBefore: "103. The ", textAfter: " world has a responsibility towards poorer countries.", root: "DEVELOP", answer: "developed" },
+    { id: 104, textBefore: "104. The vast majority of the world's hungry people live in ", textAfter: " countries, where 12.9 percent of the population is undernourished.", root: "DEVELOP", answer: "developing" },
+    { id: 105, textBefore: "105. The law protects you against ", textAfter: " at work, including dismissal, employment terms and conditions, promotion and transfer opportunities.", root: "DISCRIMINATE", answer: "discrimination" },
+    { id: 106, textBefore: "106. You're protected from ", textAfter: " in these situations: at work, in education, as a consumer, when buying or renting property.", root: "DISCRIMINATE", answer: "discrimination" },
+    { id: 107, textBefore: "107. Some common reasons for ", textAfter: " include poor performance or incompetence, attendance problems, and insubordination and other behavioural problems.", root: "DISMISS", answer: "dismissal" },
+    { id: 108, textBefore: "108. ", textAfter: " means to spread the product throughout the marketplace such that a large number of people can buy it.", root: "DISTRIBUTE", answer: "distributing" },
+    { id: 109, textBefore: "109. Beer Direct are an importer, ", textAfter: " and wholesaler of speciality beer in UK.", root: "DISTRIBUTE", answer: "distributor" },
+    { id: 110, textBefore: "110. ", textAfter: " is now the main reason people sell their homes as growing numbers hunt for a smaller property in an attempt to cut their bills and boost their income.", root: "DOWNSIZE", answer: "downsizing" },
+    { id: 111, textBefore: "111. ", textAfter: " usually involves selling your existing property, using the spare equity to buy somewhere smaller and cheaper.", root: "DOWNSIZE", answer: "downsizing" },
+    { id: 112, textBefore: "112. Although people traditionally consider ", textAfter: " as they approach retirement, growing numbers of younger home owners are doing it as well.", root: "DOWNSIZE", answer: "downsizing" },
+    { id: 113, textBefore: "113. He is putting together a £1.3m lawsuit for loss of ", textAfter: " on the basis he was unfairly dismissed.", root: "EARN", answer: "earnings" },
+    { id: 114, textBefore: "114. The number of international students in British Higher Education has risen ", textAfter: " over the past 20 years.", root: "DRAMA", answer: "dramatically" },
+    { id: 115, textBefore: "115. In 2008, the ", textAfter: " took a real down turn, causing the loss of jobs and money everywhere, and has yet to reach the point in where it was before.", root: "ECONOMISE", answer: "economy" },
+    { id: 116, textBefore: "116. He liked money and so he thought he would study ", textAfter: ", but politics turned out to interest him ever more.", root: "ECONOMISE", answer: "economics" },
+    { id: 117, textBefore: "117. ", textAfter: " is a person who works in or studies the field of economics.", root: "ECONOMISE", answer: "economist" },
+    { id: 118, textBefore: "118. In ", textAfter: " advanced countries, women marry later.", root: "ECONOMIC", answer: "economically" },
+    { id: 119, textBefore: "119. How to use technology more efficiently and ", textAfter: " in your business.", root: "ECONOMIC", answer: "economically" },
+    { id: 120, textBefore: "120. As soon as someone accepts a job offer they have a contract with their ", textAfter: ".", root: "EMPLOY", answer: "employer" },
+    { id: 121, textBefore: "121. Car makers are some of the most productive ", textAfter: " in Britain.", root: "EMPLOY", answer: "employers" },
+    { id: 122, textBefore: "122. After graduation, she found ", textAfter: " with a local finance company.", root: "EMPLOY", answer: "employment" },
+    { id: 123, textBefore: "123. ", textAfter: " has risen among people over 55.", root: "EMPLOY", answer: "Unemployment" },
+    { id: 124, textBefore: "124. The UK ", textAfter: " total has risen for the first time in two years, according to the Office for National Statistics.", root: "EMPLOY", answer: "unemployment" },
+    { id: 125, textBefore: "125. BBC offers 5,000 digital traineeships to ", textAfter: " young people.", root: "EMPLOY", answer: "unemployed" },
+    { id: 126, textBefore: "126. Too many teenagers were leaving school without adequate qualifications in English and Maths, making them \"effectively ", textAfter: ".\", he told business leaders.", root: "EMPLOY", answer: "unemployable" },
+    { id: 127, textBefore: "127. Digital literacy can boost ", textAfter: " and improve student's experience.", root: "EMPLOY", answer: "employability" },
+    { id: 128, textBefore: "128. Most of the ", textAfter: " is concentrated among part-time workers.", root: "EMPLOY", answer: "unemployment" },
+    { id: 129, textBefore: "129. This problem of ", textAfter: " seems to particularly affect the poorer parts of society and is concentrated among part-time workers.", root: "EMPLOY", answer: "unemployment" },
+    { id: 130, textBefore: "130. The main reason for the growth of ", textAfter: " has been the economic downturn of the past few years.", root: "EMPLOY", answer: "unemployment" },
+    { id: 131, textBefore: "131. If you find you are ", textAfter: " to read a PDF using your PDF aloud tools, your document is not \"accessible\".", root: "ABLE", answer: "unable" },
+    { id: 132, textBefore: "132. For many years, the government has been supporting companies taking on new employees but this ", textAfter: " has become really significant since October 2011.", root: "ENCOURAGE", answer: "encouragement" },
+    { id: 133, textBefore: "133. We need to be more ", textAfter: " in promoting ourselves abroad.", root: "ENERGY", answer: "energetic" },
+    { id: 134, textBefore: "134. The president must have the highest ", textAfter: " standards.", root: "ETHICS", answer: "ethical" },
+    { id: 135, textBefore: "135. There are some key factors that affect ", textAfter: " behaviour in the workplace.", root: "ETHICS", answer: "unethical" },
+    { id: 136, textBefore: "136. Dumping pollutants into the water supply rather than cleaning up the pollution properly is one of the examples of ", textAfter: " behaviour among businesses.", root: "ETHICS", answer: "unethical" },
+    { id: 137, textBefore: "137. Ethical or ", textAfter: " behaviour requires firms to act in ways that stakeholders consider to be both fair and honest.", root: "ETHICS", answer: "unethical" },
+    { id: 138, textBefore: "138. Profits from acting ", textAfter: " are higher than firms that only consider their own narrow self-interest.", root: "ETHICAL", answer: "ethically" },
+    { id: 139, textBefore: "139. When the two top candidates have equal qualifications, the job offer will always go to the most intelligently ", textAfter: " candidate.", root: "ENTHUSIASM", answer: "enthusiastic" },
+    { id: 140, textBefore: "140. You express intelligent enthusiasm by ", textAfter: " discussing the real issues of your work having examples ready that show your engagement in the way you execute your work to both prevent and solve problems typical of your area of expertise.", root: "ENTHUSIASTIC", answer: "enthusiastically" },
+    { id: 141, textBefore: "141. There may be a hidden number of cases previously diagnosed as Alzheimer's disease or other forms of dementia so they have to carry out a post-mortem with detailed ", textAfter: " of the brain in every case if possible.", root: "EXAMINE", answer: "examination" },
+    { id: 142, textBefore: "142. The law applies to all EU countries, Britain is no ", textAfter: ".", root: "EXCEPT", answer: "exception" },
+    { id: 143, textBefore: "143. Management by ", textAfter: " is a concept that managers use to focus on key areas of business performance instead of looking at the business as a whole.", root: "EXCEPT", answer: "exception" },
+    { id: 144, textBefore: "144. Successful two-career couples are still the ", textAfter: " not the rule. (=used to emphasize that something is unusual).", root: "EXCEPT", answer: "exception" },
+    { id: 145, textBefore: "145. The rapid ", textAfter: " of cities can cause social and economic problems.", root: "EXPAND", answer: "expansion" },
+    { id: 146, textBefore: "146. Unemployment increases during business cycle recessions and decreases during business cycle ", textAfter: " (recoveries) (The growth of a business' product and service offerings.)", root: "EXPAND", answer: "expansion" },
+    { id: 147, textBefore: "147. Of the more unusual examples of the sales boosting technique beloved by marketing departments - the brand ", textAfter: " also known as piggyback marketing.", root: "EXTEND", answer: "extension" },
+    { id: 148, textBefore: "148. US actress Jennifer Lawrence was brave enough to admit that a ", textAfter: " to negotiate had cost her millions of dollars.", root: "FAIL", answer: "failure" },
+    { id: 149, textBefore: "149. She is depressed by her continued ", textAfter: " to find a job.", root: "FAIL", answer: "failure" },
+    { id: 150, textBefore: "150. The conference was a ", textAfter: " because the parties did not reach an agreement.", root: "FAIL", answer: "failure" },
+    { id: 151, textBefore: "151. Farmers complained of ", textAfter: " competition from cheap imported food. [cite: 425, 426, 430]", root: "FAIR", answer: "unfair" },
+    { id: 152, textBefore: "152. If you've been treated ", textAfter: " at work and it's because of who you are, you may have been discriminated against. [cite: 427, 428, 431]", root: "FAIR", answer: "unfairly" },
+    { id: 153, textBefore: "153. Sometimes a company can try to get the ", textAfter: " of a major public figure to create a bigger customer base. [cite: 432, 434]", root: "ENDORSE", answer: "endorsement" },
+    { id: 154, textBefore: "154. If a famous person offers a positive ", textAfter: " of a product, often it will lead to more people buying the product due to the fact that they trust the celebrity. [cite: 435, 438, 439]", root: "ENDORSE", answer: "endorsement" },
+    { id: 155, textBefore: "155. Flooding victims are being urged to seek ", textAfter: " help, with many left homeless and thousands battling to keep the waters at bay. [cite: 440, 441, 447]", root: "FINANCE", answer: "financial" },
+    { id: 156, textBefore: "156. Millions of the citizens are ", textAfter: " 'illiterate'. 16% of UK adults cannot identify the balance on their bank statement. [cite: 442, 446, 448]", root: "FINANCIAL", answer: "financially" },
+    { id: 157, textBefore: "157. ", textAfter: " abuse can involve your partner spending your jointly-earned money, taking out loans in your name or scrutinising every penny you spend. [cite: 451, 453, 456]", root: "FINANCE", answer: "Financial" },
+    { id: 158, textBefore: "158. Planning ahead for seasonal sales ", textAfter: " can help you prevent disaster during the holidays. [cite: 454, 457, 458]", root: "FLUCTUATE", answer: "fluctuations" },
+    { id: 159, textBefore: "159. The rolling three-month average, which irons out monthly ", textAfter: " showed a rise of 1.1% on the month. [cite: 460, 461]", root: "FLUCTUATE", answer: "fluctuations" },
+    { id: 160, textBefore: "160. 'Capital ", textAfter: "'-a large-scale exodus of financial assets and capital from a nation due to events such as political or economic instability, currency devaluation or the imposition of capital controls. [cite: 464, 465]", root: "FLY", answer: "flight" },
+    { id: 161, textBefore: "161. The unluckiest man in the world, the forgotten Apple ", textAfter: " who missed out on $35 billion after selling his shares for $800 in 1976. [cite: 467, 468, 469]", root: "FOUND", answer: "founder" },
+    { id: 162, textBefore: "162. The accused were found guilty of ", textAfter: " trading, false accounting and money laundering. [cite: 470, 471, 473]", root: "FRAUD", answer: "fraudulent" },
+    { id: 163, textBefore: "163. The engineering sector achieved significant ", textAfter: " last year. [cite: 474, 475, 476]", root: "GROW", answer: "growth" },
+    { id: 164, textBefore: "164. 36-year-old Sun King is one of an unknown, but reportedly ", textAfter: " number of wealthy Chinese. [cite: 477, 478, 480]", root: "GROW", answer: "growing" },
+    { id: 165, textBefore: "165. People on welfare are wrongly seen as lazy or ", textAfter: ". [cite: 479, 481]", root: "HONEST", answer: "dishonest" },
+    { id: 166, textBefore: "166. ", textAfter: " in business is often high on lists of what employees say they want in the workplace. [cite: 483, 485, 486]", root: "HONEST", answer: "Honesty" },
+    { id: 167, textBefore: "167. Under the new law, ", textAfter: " businessmen could be disqualified from being company directors. [cite: 492, 494, 495]", root: "HONEST", answer: "dishonest" },
+    { id: 168, textBefore: "168. Personal ", textAfter: " numbers (PINs) are usually used in conjunction with usernames or other passwords. [cite: 496, 497, 498]", root: "IDENTIFY", answer: "identification" },
+    { id: 169, textBefore: "169. Because of the quick increase in number of employees the company I work for reviewed their ", textAfter: " plan for evacuating the building if there is a fire. [cite: 500, 501]", root: "IMPLEMENT", answer: "implementation" },
+    { id: 170, textBefore: "170. Employees have noticed an ", textAfter: " in the working environment the increasing difficulty of finding trained staff. [cite: 503, 511]", root: "IMPROVE", answer: "improvement" },
+    { id: 171, textBefore: "171. A new round of wage increases could trigger an ", textAfter: " spiral (=a continuing rise in both wages and prices). [cite: 505, 506, 512, 513]", root: "INFLATION", answer: "inflationary" },
+    { id: 172, textBefore: "172. ", textAfter: " prices -prices which are increased without any reason. [cite: 508, 509, 514]", root: "INFLATION", answer: "Inflated" },
+    { id: 173, textBefore: "173. Reselling tickets at ", textAfter: " prices is common for sold-out gigs and is not illegal. [cite: 515]", root: "INFLATION", answer: "inflated" },
+    { id: 174, textBefore: "174. Henry Ford is among the twenty most ", textAfter: " businessmen of all time. [cite: 517, 518, 519]", root: "INFLUENCE", answer: "influential" },
+    { id: 175, textBefore: "175. Angela Merkel is often referred to as the world's most ", textAfter: " politician. [cite: 522]", root: "INFLUENCE", answer: "influential" },
+    { id: 176, textBefore: "176. Since 1990, IGC has been a ", textAfter: " provider of viewing and collaboration software, helping companies Share electronic content across the extended enterprise. [cite: 523, 524]", root: "LEAD", answer: "Leading" },
+    { id: 177, textBefore: "177. The company has been accused by UKIP of spreading \"", textAfter: "\" on the likely costs of leaving the European Union. [cite: 525, 526]", root: "INFORM", answer: "misinformation" },
+    { id: 178, textBefore: "178. ", textAfter: " through sponsorship or philanthropy helps to build vibrant and cohesive communities, a healthier workforce, innovation and a stronger local economy. [cite: 528]", root: "INVEST", answer: "Investment" },
+    { id: 179, textBefore: "179. With this money, he started ", textAfter: " heavily. [cite: 530]", root: "INVEST", answer: "investing" },
+    { id: 180, textBefore: "180. He described the low wages paid to police officers as almost an ", textAfter: " to corruption. [cite: 532, 533, 535]", root: "INVITE", answer: "invitation" },
+    { id: 181, textBefore: "181. He's extremely ", textAfter: " about business and finance.", root: "KNOWLEDGE", answer: "knowledgeable" },
+    { id: 182, textBefore: "182. There are a lot of individuals in our agency who have deep ", textAfter: " of certain aspects of the law.", root: "KNOW", answer: "knowledge" },
+    { id: 183, textBefore: "183. Great business ", textAfter: " are running a new start-up or overseeing a more established brand, they need to innovate to keep the company fresh and exciting.", root: "LEAD", answer: "leaders" },
+    { id: 184, textBefore: "184. Someone with great ", textAfter: " skills today is Bill Gates who, despite early failures, with continued passion and innovation has driven Microsoft and the software industry to success.", root: "LEAD", answer: "leadership" },
+    { id: 185, textBefore: "185. When Tanya got promoted to manager, she had trouble entering a role of ", textAfter: ", and felt that her employees did not show her enough respect.", root: "LEAD", answer: "leader" },
+    { id: 186, textBefore: "186. HR professionals and employees talk about the changing nature of ", textAfter: " and its impact on the workplace.", root: "LOYAL", answer: "loyalty" },
+    { id: 187, textBefore: "187. Research by Robert L. Kenwood concluded that ", textAfter: " need three essential skills: technical skills, human skills, and conceptual skills.", root: "MANAGE", answer: "managers" },
+    { id: 188, textBefore: "188. The ", textAfter: " director/chief executive is the most senior full-time executive of the company.", root: "MANAGE", answer: "managing" },
+    { id: 189, textBefore: "189. The bank has been the biggest ", textAfter: " in the battle for current accounts, with more than 80,000 customers closing their account.", root: "LOSE", answer: "loser" },
+    { id: 190, textBefore: "190. BBB Bank shocks with warning of €6bn ", textAfter: ".", root: "LOSE", answer: "loss" },
+    { id: 191, textBefore: "191. Employees are using time ", textAfter: " skills to make better use of the working day.", root: "MANAGE", answer: "management" },
+    { id: 192, textBefore: "192. The ", textAfter: " will create the biggest television company in the country.", root: "MERGE", answer: "merger" },
+    { id: 193, textBefore: "193. Our real ", textAfter: " is to make a profit.", root: "MOTIVATE", answer: "motivation" },
+    { id: 194, textBefore: "194. ", textAfter: " is about the ways a business can encourage staff to give their best.", root: "MOTIVATE", answer: "Motivation" },
+    { id: 195, textBefore: "195. David Cameron will enter the biggest ", textAfter: " of his prime ministership in Brussels with his campaign to rewrite the terms of Britain's membership of the EU.", root: "NEGOTIATE", answer: "negotiation" },
+    { id: 196, textBefore: "196. The practice of having certain job functions done outside a company instead of having an in-house is called ", textAfter: ".", root: "OFFSHORE", answer: "offshoring" },
+    { id: 197, textBefore: "197. There are ", textAfter: " advantages in putting sales and admin in the same building.", root: "OPERATE", answer: "operational" },
+    { id: 198, textBefore: "198. He has shown himself to be a canny ", textAfter: " in wage negotiations.", root: "OPERATE", answer: "operator" },
+    { id: 199, textBefore: "199. English is compulsory for all students, but art and music are ", textAfter: ".", root: "OPTION", answer: "optional" },
+    { id: 200, textBefore: "200. The price includes hotel and meals – entertainment is ", textAfter: ".", root: "OPTION", answer: "optional" },
+    { id: 201, textBefore: "201. It is hoped, by the board of directors, that the ", textAfter: " of the company will keep the company from going bankrupt.", root: "ORGANISE", answer: "reorganisation" },
+    { id: 202, textBefore: "202. In a globalised labour market characterised by ", textAfter: " low wages and minimal workplace guarantees, is there any space for promoting the social wellbeing and interests of employees?", root: "OUTSOURCE", answer: "outsourcing" },
+    { id: 203, textBefore: "203. Performing a periodic detailed ", textAfter: " analysis of a company can be a useful way for management to identify problems.", root: "ORGANISE", answer: "organisational" },
+    { id: 204, textBefore: "204. The company was returned to private ", textAfter: ".", root: "OWNER", answer: "ownership" },
+    { id: 205, textBefore: "205. Discounts are offered for cash ", textAfter: ".", root: "PAY", answer: "payments" },
+    { id: 206, textBefore: "206. Tax is ", textAfter: " on the interest.", root: "PAY", answer: "payable" },
+    { id: 207, textBefore: "207. Paper invoices received by BBC Accounts ", textAfter: " after 16th December 2014 may not be processed in full until the BBC's finance systems are restored.", root: "PAY", answer: "payable" },
+    { id: 208, textBefore: "208. Money that is ", textAfter: " at a particular time has to be paid back by that time.", root: "PAY", answer: "payable" },
+    { id: 209, textBefore: "209. He obtained ", textAfter: " from his boss before talking to the press.", root: "PERMIT", answer: "permission" },
+    { id: 210, textBefore: "210. Economists have established a link between workers' happiness and their ", textAfter: ".", root: "PERFORM", answer: "performance" },
+    { id: 211, textBefore: "211. ", textAfter: " parties are putting together their manifestos for May's general election.", root: "POLITICS", answer: "Political" },
+    { id: 212, textBefore: "212. There is the need to raise the quality of the ", textAfter: " of consumer goods.", root: "PRODUCE", answer: "production" },
+    { id: 213, textBefore: "213. South Carolina is the fourth largest ", textAfter: " of tobacco.", root: "PRODUCE", answer: "producer" },
+    { id: 214, textBefore: "214. He works in marketing and ", textAfter: " development department.", root: "PRODUCE", answer: "product" },
+    { id: 215, textBefore: "215. The ", textAfter: " capacity of the economy can be thought of as the maximum level of production of goods and services that can be generated.", root: "PRODUCE", answer: "production" },
+    { id: 216, textBefore: "216. T&T's investment in its ", textAfter: " capacity has been on the decline, a leading economist has said.", root: "PRODUCE", answer: "production" },
+    { id: 217, textBefore: "217. An estimated $37 billion is lost every year to ", textAfter: " meetings.", root: "PRODUCE", answer: "unproductive" },
+    { id: 218, textBefore: "218. The trouble is that when we are at work we are terribly ", textAfter: ".", root: "PRODUCE", answer: "unproductive" },
+    { id: 219, textBefore: "219. We ", textAfter: " on average 30% less per hour than workers in Germany, the US and France - we even produce 10% less than the average Italian.", root: "PRODUCT", answer: "produce" },
+    { id: 220, textBefore: "220. There are plenty of internationally ", textAfter: " and cutting edge companies in the UK.", root: "SUCCESS", answer: "successful" },
+    { id: 221, textBefore: "221. Unsurprisingly, Knoll is sceptical about the accuracy of the statistics on France's ", textAfter: ".", root: "PRODUCE", answer: "productivity" },
+    { id: 222, textBefore: "222. ", textAfter: " is considered a key source of economic growth.", root: "PRODUCE", answer: "Productivity" },
+    { id: 223, textBefore: "223. ", textAfter: " comes from providing employees with meaning and purpose in the work they do.", root: "PRODUCE", answer: "Productiveness" },
+    { id: 224, textBefore: "224. A team of economists has now produced research that suggests there are clear links between workers' happiness and their ", textAfter: ".", root: "PRODUCE", answer: "productiveness" },
+    { id: 225, textBefore: "225. There is a growing body of evidence that shorter work weeks actually lead to more ", textAfter: " employees.", root: "PRODUCE", answer: "productive" },
+    { id: 226, textBefore: "226. Bureaucracy is impersonal, hierarchical - and ", textAfter: ".", root: "PRODUCE", answer: "unproductive" },
+    { id: 227, textBefore: "227. ", textAfter: " of refugees, projected to take two years, would take 166 years to implement at current rate.", root: "RELOCATE", answer: "Relocation" },
+    { id: 228, textBefore: "228. The Guardian is regarded as ", textAfter: " sources of information.", root: "RELY", answer: "reliable" },
+    { id: 229, textBefore: "229. Are we becoming too ", textAfter: " on computers?", root: "RELY", answer: "reliant" },
+    { id: 230, textBefore: "230. A missing man who is ", textAfter: " on medication not been seen for nearly a week.", root: "RELY", answer: "reliant" },
+    { id: 231, textBefore: "231. Do temperature records ", textAfter: " show the planet is warming?", root: "RELY", answer: "reliably" },
+    { id: 232, textBefore: "232. Unlike many other countries in the region, it has adopted a so-called \"self-", textAfter: " strategy\", allowing refugees the right to work and a significant degree of freedom of movement.", root: "RELY", answer: "reliance" },
+    { id: 233, textBefore: "233. In today's economy, a career as a financial ", textAfter: " has increasing appeal.", root: "REPRESENT", answer: "representative" },
+    { id: 234, textBefore: "234. As a financial ", textAfter: ", you'll be educating others and helping individuals, families, and businesses achieve their financial goals.", root: "REPRESENT", answer: "representative" },
+    { id: 235, textBefore: "235. The refugees' main ", textAfter: " are food and shelter.", root: "REQUIRE", answer: "requirements" },
+    { id: 236, textBefore: "236. The Romanian prime minister has announced the ", textAfter: " of his government following large protests over a nightclub fire that killed more than 30 people.", root: "RESIGN", answer: "resignation" },
+    { id: 237, textBefore: "237. I am writing in ", textAfter: " to your letter of June 12.", root: "RESPOND", answer: "response" },
+    { id: 238, textBefore: "238. We try to be ", textAfter: " to the needs of the customer.", root: "RESPONSE", answer: "responsive" },
+    { id: 239, textBefore: "239. ", textAfter: " dress code policies are being criticized online as well as on school grounds.", root: "RESTRICT", answer: "Restrictive" },
+    { id: 240, textBefore: "240. Ministry of Defence braced for criticism over army ", textAfter: ".", root: "RESTRUCTURE", answer: "restructurisation" },
+    { id: 241, textBefore: "241. A sole ", textAfter: " describes any business that is owned and controlled by one person.", root: "TRADE", answer: "trader" },
+    { id: 242, textBefore: "242. For the first time since 2010, that tech giant was not ranked No.1 on branding research firm Millward Brown's annual list of the world's most ", textAfter: " brands.", root: "VALUE", answer: "valuable" },
+    { id: 243, textBefore: "243. His main ", textAfter: " as a manager is his inability to delegate.", root: "WEAK", answer: "weakness" },
+    { id: 244, textBefore: "244. New rules will ", textAfter: " European citizens' privacy protests.", root: "STRONG", answer: "strengthen" },
+    { id: 245, textBefore: "245. For many people today the word \"", textAfter: "\" is synonymous with another: \"freedom\". The freedom, after decades of work, to get up when you want, to choose how you will spend your day and to travel the world.", root: "RETIRE", answer: "Retirement" },
+    { id: 246, textBefore: "246. It's common knowledge that you need money to enjoy ", textAfter: ".", root: "RETIRE", answer: "retirement" },
+    { id: 247, textBefore: "247. All small companies will need to make ", textAfter: ".", root: "SAVE", answer: "savings" },
+    { id: 248, textBefore: "248. A load of goods sent by sea, road, or air, or the act of sending them is called ", textAfter: ".", root: "SHIP", answer: "shipping" },
+    { id: 249, textBefore: "249. When you are the ", textAfter: " it will be your responsibility to make sure that the load gets out on time for your customer.", root: "SHIP", answer: "shipper" },
+    { id: 250, textBefore: "250. The expedition is looking for ", textAfter: " from one of the major banks.", root: "SPONSOR", answer: "sponsorship" },
+    { id: 251, textBefore: "251. There are no simple ", textAfter: " to the problem of overpopulation.", root: "SOLVE", answer: "solutions" }
+
+];
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        // Generowanie HTML dla pytań
+        questions.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-container';
+            questionDiv.innerHTML = `
+                <span class="root-word">(${q.root})</span>
+                ${q.textBefore} 
+                <input type="text" id="input-${index}" data-answer="${q.answer}" autocomplete="off"> 
+                ${q.textAfter}
+                <span id="feedback-${index}" class="feedback"></span>
+            `;
+            quizContainer.appendChild(questionDiv);
+        });
+
+        // Funkcja sprawdzająca odpowiedzi
+        function checkAnswers() {
+            questions.forEach((q, index) => {
+                const inputElement = document.getElementById(`input-${index}`);
+                const feedbackElement = document.getElementById(`feedback-${index}`);
+                const userAnswer = inputElement.value.trim().toLowerCase();
+                const correctAnswer = q.answer.toLowerCase();
+
+                // Czyszczenie poprzednich stylów
+                inputElement.classList.remove('correct', 'incorrect');
+                feedbackElement.classList.remove('correct-text', 'incorrect-text');
+                
+                if (userAnswer === correctAnswer) {
+                    inputElement.classList.add('correct');
+                    feedbackElement.textContent = "✔ Dobrze!";
+                    feedbackElement.classList.add('correct-text');
+                } else {
+                    inputElement.classList.add('incorrect');
+                    if (userAnswer === "") {
+                        feedbackElement.textContent = "✖ Brak odpowiedzi.";
+                    } else {
+                        feedbackElement.textContent = "✖ Źle. Poprawna odpowiedź to: " + q.answer;
+                    }
+                    feedbackElement.classList.add('incorrect-text');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
