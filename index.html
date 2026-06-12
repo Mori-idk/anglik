@@ -20,6 +20,12 @@
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
         }
+        #progress {
+            text-align: center;
+            color: #7f8c8d;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
         .question-container {
             background: #fff;
             padding: 20px;
@@ -63,18 +69,23 @@
             display: block;
             width: 100%;
             padding: 15px;
-            background-color: #3498db;
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 18px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 10px;
             transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #2980b9;
-        }
+        #check-btn { background-color: #3498db; }
+        #check-btn:hover { background-color: #2980b9; }
+        
+        #next-btn { background-color: #2ecc71; display: none; }
+        #next-btn:hover { background-color: #27ae60; }
+        
+        #restart-btn { background-color: #9b59b6; display: none; margin-top: 30px;}
+        #restart-btn:hover { background-color: #8e44ad; }
+        
         .citation {
             font-size: 0.8em;
             color: #7f8c8d;
@@ -84,17 +95,20 @@
 <body>
 
     <h1>Ćwiczenia Słowotwórcze</h1>
-    <p>Wpisz odpowiednie formy słów bazowych w luki, a następnie sprawdź swoje odpowiedzi.</p>
+    <p style="text-align: center;">Wpisz odpowiednie formy słów bazowych w luki, a następnie sprawdź swoje odpowiedzi.</p>
+    
+    <div id="progress"></div>
 
-    <div id="quiz-container">
-        </div>
+    <div id="quiz-container"></div>
 
-    <button onclick="checkAnswers()">Sprawdź odpowiedzi</button>
+    <button id="check-btn" onclick="checkAnswers()">Sprawdź odpowiedzi</button>
+    <button id="next-btn" onclick="nextBatch()">Następne pytania ➔</button>
+    <button id="restart-btn" onclick="restartQuiz()">↻ Przećwiczyłeś wszystko! Zacznij od nowa</button>
 
     <script>
-        // Baza pytań oparta na Twoim pliku
+        // TUTAJ WKLEJ SWOJĄ PEŁNĄ BAZĘ 251 PYTAŃ
         const questions = [
-    { id: 1, textBefore: "1. Increased environmental ", textAfter: " has led to a greater demand for recycled paper.", root: "AWARE", answer: "awareness" }, // [cite: 1, 2]
+            { id: 1, textBefore: "1. Increased environmental ", textAfter: " has led to a greater demand for recycled paper.", root: "AWARE", answer: "awareness" }, // [cite: 1, 2]
     { id: 2, textBefore: "2. Environmental ", textAfter: " has increased dramatically over the past decade.", root: "AWARE", answer: "awareness" }, // [cite: 3, 4]
     { id: 3, textBefore: "3. Students who achieve an ", textAfter: " standard will progress to degree studies.", root: "ACCEPT", answer: "acceptable" }, // [cite: 5, 7]
     { id: 4, textBefore: "4. The recommendations from this report are ", textAfter: "to many people.", root: "ACCEPT", answer: "acceptable" }, // [cite: 8, 9]
@@ -346,27 +360,76 @@
     { id: 250, textBefore: "250. The expedition is looking for ", textAfter: " from one of the major banks.", root: "SPONSOR", answer: "sponsorship" },
     { id: 251, textBefore: "251. There are no simple ", textAfter: " to the problem of overpopulation.", root: "SOLVE", answer: "solutions" }
 
-];
+        ];
 
-        const quizContainer = document.getElementById('quiz-container');
+        // Zmienne sterujące quizem
+        let shuffledQuestions = [];
+        let currentIndex = 0;
+        const batchSize = 10;
+        let currentBatch = [];
 
-        // Generowanie HTML dla pytań
-        questions.forEach((q, index) => {
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question-container';
-            questionDiv.innerHTML = `
-                <span class="root-word">(${q.root})</span>
-                ${q.textBefore} 
-                <input type="text" id="input-${index}" data-answer="${q.answer}" autocomplete="off"> 
-                ${q.textAfter}
-                <span id="feedback-${index}" class="feedback"></span>
-            `;
-            quizContainer.appendChild(questionDiv);
-        });
+        // Algorytm Fisher-Yates do tasowania tablicy
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
 
-        // Funkcja sprawdzająca odpowiedzi
+        // Inicjalizacja quizu po uruchomieniu/restarcie
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentIndex = 0;
+            renderBatch();
+        }
+
+        // Renderowanie paczki 10 pytań
+        function renderBatch() {
+            const quizContainer = document.getElementById('quiz-container');
+            const progressDiv = document.getElementById('progress');
+            quizContainer.innerHTML = '';
+            
+            // Kontrola widoczności przycisków
+            document.getElementById('check-btn').style.display = 'block';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'none';
+
+            // Wycinanie 10 pytań z potasowanej listy
+            currentBatch = shuffledQuestions.slice(currentIndex, currentIndex + batchSize);
+
+            // Jeśli doszliśmy do końca listy
+            if (currentBatch.length === 0) {
+                quizContainer.innerHTML = '<h2 style="text-align: center; color: #2ecc71;">Gratulacje! 🎉 Przećwiczyłeś całą bazę!</h2>';
+                document.getElementById('check-btn').style.display = 'none';
+                document.getElementById('restart-btn').style.display = 'block';
+                progressDiv.innerHTML = '';
+                return;
+            }
+
+            // Generowanie HTML dla bieżącej paczki
+            currentBatch.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.innerHTML = `
+                    <span class="root-word">(${q.root})</span>
+                    ${q.textBefore} 
+                    <input type="text" id="input-${index}" data-answer="${q.answer}" autocomplete="off"> 
+                    ${q.textAfter}
+                    <span id="feedback-${index}" class="feedback"></span>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            
+            // Aktualizacja licznika postępu
+            const endNum = Math.min(currentIndex + batchSize, shuffledQuestions.length);
+            progressDiv.innerText = `Pytania: ${currentIndex + 1} - ${endNum} z ${shuffledQuestions.length}`;
+        }
+
+        // Funkcja sprawdzająca odpowiedzi z danej paczki
         function checkAnswers() {
-            questions.forEach((q, index) => {
+            currentBatch.forEach((q, index) => {
                 const inputElement = document.getElementById(`input-${index}`);
                 const feedbackElement = document.getElementById(`feedback-${index}`);
                 const userAnswer = inputElement.value.trim().toLowerCase();
@@ -390,7 +453,25 @@
                     feedbackElement.classList.add('incorrect-text');
                 }
             });
+
+            // Ukryj "Sprawdź", pokaż "Następne"
+            document.getElementById('check-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'block';
         }
+
+        // Przejście do następnej paczki pytań
+        function nextBatch() {
+            currentIndex += batchSize;
+            renderBatch();
+        }
+        
+        // Reset quizu
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Uruchomienie quizu przy pierwszym wczytaniu strony
+        window.onload = initQuiz;
     </script>
 </body>
 </html>
